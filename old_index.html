@@ -1,0 +1,564 @@
+<!DOCTYPE html>
+<html lang="tr">
+
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no" />
+  <title>Kelime Avı - Seviyeli Bulmaca</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <script>
+    tailwind.config = {
+      theme: {
+        extend: {
+          fontFamily: {
+            sans: ['Outfit', 'sans-serif'],
+          },
+          colors: {
+            brand: {
+              50: '#eff6ff',
+              100: '#dbeafe',
+              500: '#3b82f6',
+              600: '#2563eb',
+              700: '#1d4ed8',
+            }
+          }
+        }
+      }
+    }
+  </script>
+  <style>
+    /* Dinamik grid yapısı için gerekli */
+    #tahta {
+      touch-action: none;
+      /* Mobilde kaydırmayı engelle */
+    }
+
+    .hucre-anim {
+      animation: poppy 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+    }
+
+    @keyframes poppy {
+      0% {
+        transform: scale(0.5);
+        opacity: 0;
+      }
+
+      100% {
+        transform: scale(1);
+        opacity: 1;
+      }
+    }
+  </style>
+</head>
+
+<body
+  class="bg-gradient-to-br from-slate-50 to-blue-100 min-h-screen font-sans text-slate-800 flex flex-col items-center py-8 px-4 select-none">
+
+  <!-- Header / Level Info -->
+  <header class="w-full max-w-4xl flex justify-between items-center mb-6">
+    <div>
+      <h1 class="text-3xl font-bold text-slate-900 tracking-tight">Kelime Avı</h1>
+      <p class="text-slate-500 text-sm mt-1">Kelimeleri bul, seviyeleri tamamla.</p>
+    </div>
+    <div class="flex items-center gap-4">
+      <div class="bg-white/80 backdrop-blur px-4 py-2 rounded-xl shadow-sm border border-white/50">
+        <span class="text-xs text-slate-500 uppercase font-bold tracking-wider">Seviye</span>
+        <div class="text-2xl font-bold text-brand-600 leading-none" id="seviyeGostergesi">1</div>
+      </div>
+    </div>
+  </header>
+
+  <!-- Main Game Area -->
+  <main class="w-full max-w-5xl flex flex-col lg:flex-row gap-8 items-start justify-center">
+
+    <!-- Game Board Container -->
+    <div class="relative group">
+      <!-- Board Background/Card -->
+      <div class="bg-white p-4 md:p-6 rounded-3xl shadow-2xl shadow-blue-900/10 border border-slate-100">
+        <div id="tahta" class="grid gap-1 md:gap-1.5 mx-auto"></div>
+      </div>
+
+      <!-- Level Complete Overlay -->
+      <div id="seviyeSonuModal"
+        class="hidden absolute inset-0 bg-white/90 backdrop-blur-sm rounded-3xl z-10 flex-col items-center justify-center text-center p-6 animate-fade-in">
+        <div class="w-16 h-16 bg-green-100 text-green-600 rounded-full flex items-center justify-center mb-4 text-3xl">
+          🎉</div>
+        <h2 class="text-2xl font-bold text-slate-900 mb-2">Seviye Tamamlandı!</h2>
+        <p class="text-slate-600 mb-6">Tüm kelimeleri başarıyla buldun.</p>
+        <button id="sonrakiSeviyeBtn"
+          class="bg-brand-600 hover:bg-brand-700 text-white font-semibold py-3 px-8 rounded-xl shadow-lg shadow-brand-500/30 transition transform hover:scale-105 active:scale-95">
+          Sonraki Seviye
+        </button>
+      </div>
+    </div>
+
+    <!-- Side Panel -->
+    <div class="w-full lg:w-80 flex flex-col gap-6">
+
+      <!-- Word List Card -->
+      <div class="bg-white p-6 rounded-3xl shadow-xl shadow-slate-200/50 border border-slate-100 flex-1">
+        <div class="flex justify-between items-baseline mb-4">
+          <h3 class="text-lg font-bold text-slate-800">Aranacaklar</h3>
+          <span id="kalanKelimeSayisi"
+            class="text-xs font-medium bg-slate-100 text-slate-600 px-2 py-1 rounded-md"></span>
+        </div>
+        <div id="kelimeler" class="flex flex-wrap gap-2"></div>
+      </div>
+
+      <!-- Controls -->
+      <div class="grid grid-cols-2 gap-3">
+        <button id="karistirDugme"
+          class="flex items-center justify-center gap-2 bg-white hover:bg-slate-50 text-slate-700 font-medium py-3 px-4 rounded-xl border border-slate-200 shadow-sm transition-all text-sm">
+          <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none"
+            stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <path d="M21 16v5h-5" />
+            <path d="M3 8v5h5" />
+            <path d="M21 21l-4.22-4.22" />
+            <path d="M3 3l4.22 4.22" />
+            <path d="M9 13a5 5 0 0 1-3.6-8.4" />
+            <path d="M15 11a5 5 0 0 1 3.6 8.4" />
+          </svg>
+          Karıştır
+        </button>
+        <button id="ipucuDugme"
+          class="flex items-center justify-center gap-2 bg-indigo-50 hover:bg-indigo-100 text-indigo-600 font-medium py-3 px-4 rounded-xl border border-indigo-100 shadow-sm transition-all text-sm">
+          <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none"
+            stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <circle cx="12" cy="12" r="10" />
+            <path d="M9.09 9a3 3 0 0 1 5.83 1c0 2-3 3-3 3" />
+            <path d="M12 17h.01" />
+          </svg>
+          İpucu
+        </button>
+      </div>
+
+      <div class="text-xs text-slate-400 text-center leading-relaxed px-4">
+        <p>Kelimeleri bulmak için parmağını veya fareyi sürükle.</p>
+        Yatay, dikey veya çapraz olabilir.
+      </div>
+
+    </div>
+  </main>
+
+  <script>
+    // Oyun Verileri - Seviyeler
+    const SEVIYELER = [
+      {
+        seviye: 1,
+        boyut: 8,
+        kelimeler: ["ELMA", "ARMUT", "KIRAZ", "UZUM", "MUZ", "INCIR"]
+      },
+      {
+        seviye: 2,
+        boyut: 10,
+        kelimeler: ["KALEM", "DEFTER", "SILGI", "KITAP", "CANTA", "CETVEL", "BOYA", "KAGIT"]
+      },
+      {
+        seviye: 3,
+        boyut: 11,
+        kelimeler: ["JAVASCRIPT", "HTML", "CSS", "NODEJS", "REACT", "VUE", "ANGULAR", "PYTHON"]
+      },
+      {
+        seviye: 4,
+        boyut: 12,
+        kelimeler: ["ISTANBUL", "ANKARA", "IZMIR", "ANTALYA", "BURSA", "ADANA", "KONYA", "TRABZON", "SAMSUN"]
+      },
+      {
+        seviye: 5,
+        boyut: 12,
+        kelimeler: ["MERKUR", "VENUS", "DUNYA", "MARS", "JUPITER", "SATURN", "URANUS", "NEPTUN", "PLUTON"]
+      }
+    ];
+
+    class CengelBulmaca {
+      constructor(config) {
+        this.elTahta = config.elTahta;
+        this.elKelimeler = config.elKelimeler;
+        this.elSeviyeGostergesi = config.elSeviyeGostergesi;
+        this.elSeviyeSonuModal = config.elSeviyeSonuModal;
+        this.elSonrakiBtn = config.elSonrakiBtn;
+        this.elKalanSayisi = config.elKalanSayisi;
+
+        this.aktifSeviyeIndex = 0;
+        this.veriler = null;
+
+        this.tahta = [];
+        this.yerlestirmeler = [];
+        this.secimAktif = false;
+        this.yol = [];
+        this.BOS_ISARET = "";
+
+        // Event Listeners
+        this.elSonrakiBtn.onclick = () => this.sonrakiSeviye();
+        document.getElementById('karistirDugme').onclick = () => this.seviyeyiYukle(this.aktifSeviyeIndex);
+        document.getElementById('ipucuDugme').onclick = () => this.ipucuVer();
+
+        this.elTahta.addEventListener("mouseleave", () => this.secimiIptal());
+        document.addEventListener("mouseup", () => this.secimiBitir());
+        document.addEventListener("touchend", () => this.secimiBitir());
+
+        // Oyunu başlat
+        this.seviyeyiYukle(0);
+      }
+
+      seviyeyiYukle(index) {
+        if (index >= SEVIYELER.length) {
+          alert("Oyun bitti! Tebrikler, tüm seviyeleri tamamladınız.");
+          this.aktifSeviyeIndex = 0;
+          index = 0;
+        }
+
+        this.aktifSeviyeIndex = index;
+        this.veriler = SEVIYELER[index];
+        this.boyut = this.veriler.boyut;
+
+        // UI Güncelle
+        this.elSeviyeGostergesi.textContent = this.veriler.seviye;
+        this.elSeviyeSonuModal.classList.add('hidden');
+        this.elSeviyeSonuModal.classList.remove('flex');
+
+        // Hazırlık
+        this.sifirla();
+        this.kelimeleriYerlestir([...this.veriler.kelimeler]);
+        this.rastgeleHarflerleDoldur();
+        this.tahtaCiz();
+        this.kelimelerUIOlustur();
+        this.kalanGuncelle();
+      }
+
+      sifirla() {
+        this.tahta = Array.from({ length: this.boyut }, () => Array(this.boyut).fill(null));
+        this.yerlestirmeler = [];
+        this.yol = [];
+
+        // Grid template ayarla (Tailwind ile inline style kombinasyonu)
+        // Hücre boyutu responsive olsun diye minmax kullanıyoruz ama mobilde sığması lazım
+        // Mobilde vw bazlı, masaüstünde sabit pixel bazlı bir yaklaşım daha iyi olabilir
+        // Basitlik için fr kullanacağız.
+        this.elTahta.style.gridTemplateColumns = `repeat(${this.boyut}, 1fr)`;
+      }
+
+      kelimeleriYerlestir(kelimeListesi) {
+        const yonler = [
+          { dr: 0, dc: 1 }, { dr: 1, dc: 0 }, { dr: 1, dc: 1 }, { dr: -1, dc: 1 },
+          { dr: 0, dc: -1 }, { dr: -1, dc: 0 }, { dr: -1, dc: -1 }, { dr: 1, dc: -1 }
+        ];
+
+        // Uzun kelimelerden başla, yerleşmesi daha zor olduğu için
+        kelimeListesi.sort((a, b) => b.length - a.length);
+
+        for (const kelime of kelimeListesi) {
+          let yerlesti = false;
+          // 100 deneme hakkı
+          for (let dene = 0; dene < 100 && !yerlesti; dene++) {
+            const yon = yonler[Math.floor(Math.random() * yonler.length)];
+            const r0 = Math.floor(Math.random() * this.boyut);
+            const c0 = Math.floor(Math.random() * this.boyut);
+
+            if (this.yerlesebilirMi(kelime, r0, c0, yon)) {
+              const hucreler = [];
+              for (let k = 0; k < kelime.length; k++) {
+                const r = r0 + yon.dr * k;
+                const c = c0 + yon.dc * k;
+                this.tahta[r][c] = kelime[k];
+                hucreler.push({ r, c });
+              }
+              this.yerlestirmeler.push({ kelime, hucreler, bulundu: false });
+              yerlesti = true;
+            }
+          }
+          if (!yerlesti) {
+            console.warn(`"${kelime}" yerleştirilemedi, yeniden deneniyor...`);
+            // Eğer çok kritikse recursive restart yapılabilir ama şimdilik pas geçelim.
+          }
+        }
+      }
+
+      yerlesebilirMi(kelime, r0, c0, { dr, dc }) {
+        const rSon = r0 + dr * (kelime.length - 1);
+        const cSon = c0 + dc * (kelime.length - 1);
+
+        if (rSon < 0 || rSon >= this.boyut || cSon < 0 || cSon >= this.boyut) return false;
+
+        for (let k = 0; k < kelime.length; k++) {
+          const r = r0 + dr * k;
+          const c = c0 + dc * k;
+          const mevcut = this.tahta[r][c];
+          if (mevcut !== null && mevcut !== kelime[k]) return false;
+        }
+        return true;
+      }
+
+      rastgeleHarflerleDoldur() {
+        const HARFLER = "ABCÇDEFGĞHIİJKLMNOÖPRSŞTUÜVYZ";
+        for (let r = 0; r < this.boyut; r++) {
+          for (let c = 0; c < this.boyut; c++) {
+            if (this.tahta[r][c] === null) {
+              this.tahta[r][c] = HARFLER[Math.floor(Math.random() * HARFLER.length)];
+            }
+          }
+        }
+      }
+
+      tahtaCiz() {
+        this.elTahta.innerHTML = "";
+        // Hücre boyutu responsive hesaplama (w-8 h-8 mobilde, w-10 h-10 desktopta vs yerine dinamik)
+        // CSS grid zaten stretch yapıyor, biz sadece aspect-ratio ekleyelim.
+
+        for (let r = 0; r < this.boyut; r++) {
+          for (let c = 0; c < this.boyut; c++) {
+            const d = document.createElement("div");
+            // Tailwind sınıfları
+            d.className = `
+                relative flex items-center justify-center 
+                aspect-square rounded-lg md:rounded-xl 
+                bg-slate-50 text-slate-700 
+                font-bold text-sm md:text-lg lg:text-xl 
+                cursor-pointer select-none transition-all duration-150
+                hover:bg-slate-100 hover:scale-105 active:scale-95
+                shadow-sm border border-slate-200/50
+                hucre-anim
+              `;
+            d.textContent = this.tahta[r][c];
+            d.dataset.r = r;
+            d.dataset.c = c;
+
+            // Events
+            d.addEventListener("mousedown", (e) => this.secimBaslat(e));
+            d.addEventListener("mouseenter", (e) => this.secimeEkle(e));
+
+            // Mobile specific
+            d.addEventListener("touchstart", (e) => {
+              e.preventDefault(); // Scroll engelle
+              const touch = e.touches[0];
+              const hedef = document.elementFromPoint(touch.clientX, touch.clientY);
+              if (hedef && hedef.dataset.r) this.secimBaslat({ currentTarget: hedef });
+            });
+
+            d.addEventListener("touchmove", (e) => {
+              e.preventDefault();
+              const touch = e.touches[0];
+              const hedef = document.elementFromPoint(touch.clientX, touch.clientY);
+              if (hedef && hedef.dataset.r) {
+                // elementFromPoint tam hedef üzerindeyken çalışır
+                // target elementi değiştiyse işle
+                this.secimeEkle({ currentTarget: hedef });
+              }
+            });
+
+            this.elTahta.appendChild(d);
+          }
+        }
+      }
+
+      kelimelerUIOlustur() {
+        this.elKelimeler.innerHTML = "";
+        this.yerlestirmeler.forEach((y, i) => {
+          const span = document.createElement("div");
+          span.id = `kelime-${i}`;
+          span.className = `
+              px-3 py-1.5 rounded-lg text-sm font-medium transition-all duration-300
+              ${y.bulundu
+              ? 'bg-green-100 text-green-700 decoration-green-700/50 line-through opacity-60'
+              : 'bg-slate-100 text-slate-600'}
+            `;
+          span.textContent = y.kelime;
+          this.elKelimeler.appendChild(span);
+        });
+      }
+
+      secimBaslat(e) {
+        this.secimAktif = true;
+        this.yol = [];
+        this.hucreGorselGuncelle(e.currentTarget, true);
+        this.yol.push(this.konumAl(e.currentTarget));
+      }
+
+      secimeEkle(e) {
+        if (!this.secimAktif) return;
+        const mevcutEl = e.currentTarget;
+        if (!mevcutEl.dataset.r) return; // Güvenlik kontrolü
+
+        const konum = this.konumAl(mevcutEl);
+        const son = this.yol[this.yol.length - 1];
+
+        // Geri gelme (undo) kontrolü - Son elemana geri dönüyorsa
+        if (this.yol.length > 1) {
+          const onceki = this.yol[this.yol.length - 2];
+          if (onceki.r === konum.r && onceki.c === konum.c) {
+            // Geri adım atıldı, sonuncuyu sil
+            const silinecek = this.yol.pop();
+            const el = this.hucreGetir(silinecek.r, silinecek.c);
+            this.hucreGorselGuncelle(el, false);
+            return;
+          }
+        }
+
+        // Yolun düzgünlüğü kontrolü (direction lock)
+        if (this.yol.length >= 2) {
+          const bas = this.yol[0];
+          const ikinci = this.yol[1];
+          const yonİlk = this.yonBul(bas, ikinci);
+          const yonYeni = this.yonBul(son, konum);
+
+          if (yonİlk.dr !== yonYeni.dr || yonİlk.dc !== yonYeni.dc) return;
+        }
+
+        // Komşuluk kontrolü
+        if (this.komsuMu(son, konum)) {
+          // Zaten seçili mi? Seçiliyse ve geri gitmiyorsak bir şey yapma 
+          // ama burada basitçe ekliyoruz, repeat issue olabilir ama logic genelde sonuncuya bakar.
+          if (!this.yol.some(k => k.r === konum.r && k.c === konum.c)) {
+            this.hucreGorselGuncelle(mevcutEl, true);
+            this.yol.push(konum);
+          }
+        }
+      }
+
+      secimiBitir() {
+        if (!this.secimAktif) return;
+        this.secimAktif = false;
+
+        let kelimeBulunduMu = false;
+
+        // Bulunan kelime kontrolü
+        const bulunan = this.yerlestirmeler.find(y =>
+          !y.bulundu && (
+            this.ayniYol(this.yol, y.hucreler) ||
+            this.ayniYol([...this.yol].reverse(), y.hucreler)
+          )
+        );
+
+        if (bulunan) {
+          bulunan.bulundu = true;
+          this.bulunanKelimeyiIsle(bulunan);
+          kelimeBulunduMu = true;
+        } else {
+          // Yanlış seçim, temizle
+          this.secimiTemizle();
+        }
+
+        this.yol = [];
+
+        if (kelimeBulunduMu) {
+          this.kontrolSeviyeBittiMi();
+        }
+      }
+
+      bulunanKelimeyiIsle(bulunan) {
+        // Listedeki görseli güncelle
+        const index = this.yerlestirmeler.indexOf(bulunan);
+        const etiket = document.getElementById(`kelime-${index}`);
+        etiket.className = 'px-3 py-1.5 rounded-lg text-sm font-medium transition-all duration-300 bg-green-100 text-green-700 line-through opacity-75 ring-1 ring-green-200';
+
+        // Tablodaki hücreleri güncelle (yeşil yap)
+        for (const { r, c } of bulunan.hucreler) {
+          const el = this.hucreGetir(r, c);
+          // Tailwind sınıflarını değiştir
+          el.classList.remove('bg-brand-500', 'text-white', 'scale-105', 'bg-slate-50', 'text-slate-700');
+          el.classList.add('bg-green-500', 'text-white', 'shadow-md', 'scale-100');
+        }
+        this.kalanGuncelle();
+      }
+
+      secimiTemizle() {
+        for (const { r, c } of this.yol) {
+          const el = this.hucreGetir(r, c);
+          // Eğer bu hücre daha önce bulunmuş bir kelimeye aitse rengini koru
+          const bulunduMu = this.hucreBulunmusMu(r, c);
+          if (!bulunduMu) {
+            this.hucreGorselGuncelle(el, false);
+          } else {
+            // Sadece seçim highlight'ını kaldır, bulundu stili kalsın
+            el.classList.remove('bg-brand-500', 'scale-105');
+            el.classList.add('bg-green-500');
+          }
+        }
+      }
+
+      hucreBulunmusMu(r, c) {
+        return this.yerlestirmeler.some(y => y.bulundu && y.hucreler.some(h => h.r === r && h.c === c));
+      }
+
+      hucreGorselGuncelle(el, secili) {
+        if (secili) {
+          // Seçim rengi (Mavi)
+          el.classList.remove('bg-slate-50', 'text-slate-700', 'bg-green-500'); // Varsa yeşili de geçici ezebiliriz seçim anında
+          el.classList.add('bg-brand-500', 'text-white', 'scale-105', 'z-10', 'shadow-lg');
+        } else {
+          // Normal renge dön
+          el.classList.remove('bg-brand-500', 'text-white', 'scale-105', 'z-10', 'shadow-lg');
+          el.classList.add('bg-slate-50', 'text-slate-700');
+        }
+      }
+
+      secimiIptal() {
+        this.secimiBitir(); // Bitir ile aynı mantıkta handle edebiliriz (wrong selection)
+      }
+
+      // Yardımcılar
+      konumAl(el) { return { r: +el.dataset.r, c: +el.dataset.c }; }
+      hucreGetir(r, c) { return this.elTahta.children[r * this.boyut + c]; }
+      komsuMu(a, b) {
+        if (!a || !b) return false;
+        return Math.abs(a.r - b.r) <= 1 && Math.abs(a.c - b.c) <= 1;
+      }
+      yonBul(a, b) { return { dr: Math.sign(b.r - a.r), dc: Math.sign(b.c - a.c) }; }
+      ayniYol(a, b) {
+        if (a.length !== b.length) return false;
+        for (let i = 0; i < a.length; i++) {
+          if (a[i].r !== b[i].r || a[i].c !== b[i].c) return false;
+        }
+        return true;
+      }
+
+      kontrolSeviyeBittiMi() {
+        if (this.yerlestirmeler.every(y => y.bulundu)) {
+          // Konfeti veya ses efekti eklenebilir
+          setTimeout(() => {
+            this.elSeviyeSonuModal.classList.remove('hidden');
+            this.elSeviyeSonuModal.classList.add('flex');
+          }, 500);
+        }
+      }
+
+      sonrakiSeviye() {
+        this.seviyeyiYukle(this.aktifSeviyeIndex + 1);
+      }
+
+      ipucuVer() {
+        // Bulunmamış rastgele bir kelime seç ve ilk harfini göster
+        const bulunmamislar = this.yerlestirmeler.filter(y => !y.bulundu);
+        if (bulunmamislar.length === 0) return;
+
+        const hedef = bulunmamislar[Math.floor(Math.random() * bulunmamislar.length)];
+        const harf = hedef.hucreler[0];
+        const el = this.hucreGetir(harf.r, harf.c);
+
+        // Animasyonla vurgula
+        el.classList.add('ring-4', 'ring-yellow-400', 'animate-pulse');
+        setTimeout(() => el.classList.remove('ring-4', 'ring-yellow-400', 'animate-pulse'), 1500);
+      }
+
+      kalanGuncelle() {
+        const kalan = this.yerlestirmeler.filter(y => !y.bulundu).length;
+        this.elKalanSayisi.textContent = `${kalan} Kelime`;
+      }
+    }
+
+    // App Init
+    window.addEventListener('DOMContentLoaded', () => {
+      new CengelBulmaca({
+        elTahta: document.getElementById('tahta'),
+        elKelimeler: document.getElementById('kelimeler'),
+        elSeviyeGostergesi: document.getElementById('seviyeGostergesi'),
+        elSeviyeSonuModal: document.getElementById('seviyeSonuModal'),
+        elSonrakiBtn: document.getElementById('sonrakiSeviyeBtn'),
+        elKalanSayisi: document.getElementById('kalanKelimeSayisi')
+      });
+    });
+  </script>
+</body>
+
+</html>

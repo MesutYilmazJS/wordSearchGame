@@ -1,468 +1,154 @@
 <!DOCTYPE html>
 <html lang="tr">
-  <head>
-    <meta charset="utf-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1" />
-    <title>Çengel Kelime Bulmaca – Class Yapısı</title>
-    <style>
-      :root {
-        --hucre: 42px;
-        --bosluk: 5px;
-        --renk-ana: #2563eb;
-        --renk-dogru: #22c55e;
-        --renk-arka: #f9fafb;
-      }
 
-      body {
-        font-family: system-ui, sans-serif;
-        display: flex;
-        justify-content: center;
-        background: linear-gradient(135deg, #e0f2fe, #f9fafb);
-        padding: 20px;
-      }
+<head>
+  <meta charset="UTF-8" />
+  <link rel="icon" type="image/svg+xml" href="/vite.svg" />
+  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no" />
+  <title>Kelime Avı - Seviyeli Bulmaca</title>
+  <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@400;500;600;700&display=swap" rel="stylesheet">
+</head>
 
-      #uygulama {
-        display: flex;
-        gap: 24px;
-        align-items: flex-start;
-        width: 100%;
-        max-width: 1200px;
-      }
+<body
+  class="bg-gradient-to-br from-slate-50 to-blue-100 min-h-screen font-sans text-slate-800 flex flex-col items-center justify-center p-4 select-none touch-pan-y">
 
-      #tahta {
-        display: grid;
-        gap: var(--bosluk);
-        user-select: none;
-        background: #fff;
-        padding: 16px;
-        border-radius: 12px;
-        box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
-      }
-
-      .hucre {
-        width: var(--hucre);
-        height: var(--hucre);
-        display: grid;
-        place-items: center;
-        border-radius: 8px;
-        background: #f3f4f6;
-        font-weight: 600;
-        font-size: 18px;
-        cursor: pointer;
-      }
-
-      .bos {
-        background: #f9fafb;
-        color: #9ca3af;
-        border: 1px dashed #ddd;
-      }
-      .secili {
-        background: var(--renk-ana);
-        color: #fff;
-      }
-      .bulundu {
-        background: var(--renk-dogru);
-        color: #fff;
-      }
-
-      #panel {
-        flex: 1;
-        min-width: 240px;
-        background: #fff;
-        padding: 16px;
-        border-radius: 12px;
-        box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
-      }
-
-      #kelimeler {
-        display: flex;
-        flex-wrap: wrap;
-        gap: 8px;
-      }
-      .kelime {
-        padding: 4px 10px;
-        border-radius: 999px;
-        background: #f3f4f6;
-      }
-      .kelime.bulundu {
-        text-decoration: line-through;
-        opacity: 0.6;
-      }
-
-      button {
-        padding: 10px 14px;
-        border-radius: 8px;
-        border: none;
-        background: var(--renk-ana);
-        color: #fff;
-        font-weight: 600;
-        cursor: pointer;
-      }
-
-      /* 📱 Mobil uyarlama */
-      @media (max-width: 768px) {
-        #uygulama {
-          flex-direction: column;
-          align-items: center;
-        }
-
-        #tahta {
-          --hucre: 32px;
-          padding: 10px;
-        }
-
-        .hucre {
-          font-size: 14px;
-        }
-
-        #panel {
-          width: 100%;
-          min-width: auto;
-          margin-top: 16px;
-        }
-
-        #kelimeler {
-          justify-content: center;
-        }
-
-        button {
-          flex: 1;
-          font-size: 14px;
-          padding: 8px 12px;
-        }
-      }
-    </style>
-  </head>
-  <body>
-    <div id="uygulama">
-      <div id="tahta"></div>
-      <div id="panel">
-        <h3>Kelime Listesi</h3>
-        <div id="kelimeler"></div>
-        <div style="margin-top: 16px; display: flex; gap: 8px">
-          <button id="karistirDugme">Yeniden Karıştır</button>
-          <button id="cozumDugme">Çözümü Göster</button>
-        </div>
-        <p>
-          <small
-            >İpucu: Fare ile sürükleyerek seç. Düz çizgi olmalı
-            (yatay/dikey/çapraz). Ters yönde de geçerli.</small
-          >
-        </p>
+  <!-- GİRİŞ EKRANI -->
+  <div id="girisEkrani" class="w-full max-w-md flex flex-col items-center text-center animate-fade-in">
+    <div class="mb-8 relative">
+      <div class="absolute inset-0 bg-blue-400 rounded-full blur-2xl opacity-20 animate-pulse"></div>
+      <div
+        class="relative bg-white p-6 rounded-3xl shadow-xl shadow-blue-500/10 border border-slate-100 rotate-3 transform transition hover:rotate-6 duration-300">
+        <span class="text-6xl">🧩</span>
       </div>
     </div>
 
-    <script>
-      class CengelBulmaca {
-        constructor(
-          boyut,
-          kelimeler,
-          elTahta,
-          elKelimeler,
-          elKaristir,
-          elCozum
-        ) {
-          this.BOYUT = boyut;
-          this.KELIMELER = kelimeler;
-          this.BOS_ISARET = "#";
-          this.tahta = this.matrisOlustur(
-            this.BOYUT,
-            this.BOYUT,
-            this.BOS_ISARET
-          );
-          this.yerlestirmeler = [];
-          this.secimAktif = false;
-          this.yol = [];
+    <h1 class="text-4xl md:text-5xl font-bold text-slate-900 mb-3 tracking-tight">Kelime Avı</h1>
+    <p class="text-slate-500 text-lg mb-10 max-w-[280px]">Zihnini geliştir, saklı kelimeleri bul ve tüm seviyeleri
+      tamamla.</p>
 
-          this.elTahta = elTahta;
-          this.elKelimeler = elKelimeler;
-          this.elKaristir = elKaristir;
-          this.elCozum = elCozum;
+    <div class="w-full space-y-4">
+      <button id="oyunaBaslaBtn"
+        class="w-full bg-brand-600 hover:bg-brand-700 text-white font-bold py-4 px-8 rounded-2xl shadow-xl shadow-brand-500/30 transition transform hover:scale-105 active:scale-95 text-lg flex items-center justify-center gap-3">
+        <span>Oyuna Başla</span>
+        <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+            d="M14.752 11.168l-3.197-2.132A1 1 0 0010 9.87v4.263a1 1 0 001.555.832l3.197-2.132a1 1 0 000-1.664z" />
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+            d="M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
+        </svg>
+      </button>
 
-          this.baslat();
-        }
+      <div class="flex items-center justify-center gap-2 text-sm text-slate-400">
+        <span class="w-2 h-2 rounded-full bg-green-400"></span>
+        <span>20 Zorlu Seviye</span>
+      </div>
+    </div>
 
-        baslat() {
-          this.sifirla();
-          this.kelimeleriYerlestir();
-          this.rastgeleHarflerleDoldur();
-          this.tahtaCiz();
-          this.kelimelerCiz();
+    <footer class="mt-12 text-slate-400 text-xs">
+      mesutx.com
+    </footer>
+  </div>
 
-          this.elKaristir.onclick = () => this.baslat();
-          this.elCozum.onclick = () => this.tumunuGoster();
-          this.elTahta.addEventListener("mouseleave", () => this.secimiIptal());
-          document.addEventListener("mouseup", () => this.secimiBitir());
-        }
+  <!-- OYUN EKRANI (Başlangıçta gizli) -->
+  <div id="oyunEkrani" class="hidden w-full flex-col items-center">
+    <!-- Header / Level Info -->
+    <header class="w-full max-w-4xl flex justify-between items-center mb-6">
+      <div class="flex items-center gap-3">
+        <button id="anaMenuyeDonBtn"
+          class="text-sm text-slate-500 hover:text-slate-800 flex items-center gap-1 transition-colors bg-slate-100 hover:bg-slate-200 px-3 py-1.5 rounded-lg">
+          <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none"
+            stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <path d="M19 12H5" />
+            <path d="M12 19l-7-7 7-7" />
+          </svg>
+          <span class="hidden md:inline">Geri</span>
+        </button>
+        <h1 class="text-2xl md:text-3xl font-bold text-slate-900 tracking-tight">Kelime Avı</h1>
+      </div>
+      <div class="flex items-center gap-4">
+        <div
+          class="bg-white/80 backdrop-blur px-5 py-2.5 rounded-xl shadow-sm border border-white/50 flex items-center gap-3">
+          <span class="text-sm text-slate-500 uppercase font-bold tracking-wider">Seviye</span>
+          <div class="text-2xl font-bold text-brand-600 leading-none" id="seviyeGostergesi">1</div>
+        </div>
+      </div>
+    </header>
 
-        sifirla() {
-          this.tahta = this.matrisOlustur(
-            this.BOYUT,
-            this.BOYUT,
-            this.BOS_ISARET
-          );
-          this.yerlestirmeler = [];
-          this.yol = [];
-          this.elTahta.style.gridTemplateColumns = `repeat(${this.BOYUT}, var(--hucre))`;
-        }
+    <!-- Main Game Area -->
+    <main class="w-full max-w-5xl flex flex-col lg:flex-row gap-8 items-start justify-center">
 
-        kelimeleriYerlestir() {
-          const yonler = [
-            { dr: 0, dc: 1 },
-            { dr: 1, dc: 0 },
-            { dr: 1, dc: 1 },
-            { dr: -1, dc: 1 },
-            { dr: 0, dc: -1 },
-            { dr: -1, dc: 0 },
-            { dr: -1, dc: -1 },
-            { dr: 1, dc: -1 },
-          ];
-          for (const kelime of this.karistir([...this.KELIMELER])) {
-            let yerlesti = false;
-            for (let dene = 0; dene < 400 && !yerlesti; dene++) {
-              const yon = yonler[this.rastgele(0, yonler.length - 1)];
-              const r0 = this.rastgele(0, this.BOYUT - 1);
-              const c0 = this.rastgele(0, this.BOYUT - 1);
-              if (this.kelimeOlurMu(kelime, r0, c0, yon)) {
-                const hucreler = [];
-                for (let k = 0; k < kelime.length; k++) {
-                  const r = r0 + yon.dr * k,
-                    c = c0 + yon.dc * k;
-                  this.tahta[r][c] = kelime[k];
-                  hucreler.push({ r, c });
-                }
-                this.yerlestirmeler.push({ kelime, hucreler, bulundu: false });
-                yerlesti = true;
-              }
-            }
-          }
-        }
+      <!-- Board Container -->
+      <div class="relative group w-full lg:w-auto flex justify-center">
+        <!-- Board Background -->
+        <div
+          class="bg-white p-4 md:p-6 rounded-3xl shadow-2xl shadow-blue-900/10 border border-slate-100 w-full max-w-[600px]">
+          <div id="tahta" class="grid gap-1 md:gap-1.5 mx-auto touch-none"></div>
+        </div>
 
-        kelimeOlurMu(kelime, r0, c0, { dr, dc }) {
-          const r1 = r0 + dr * (kelime.length - 1);
-          const c1 = c0 + dc * (kelime.length - 1);
-          if (r1 < 0 || r1 >= this.BOYUT || c1 < 0 || c1 >= this.BOYUT)
-            return false;
-          for (let k = 0; k < kelime.length; k++) {
-            const r = r0 + dr * k,
-              c = c0 + dc * k;
-            const hucre = this.tahta[r][c];
-            if (hucre !== this.BOS_ISARET && hucre !== kelime[k]) return false;
-          }
-          return true;
-        }
+        <!-- Level Complete MODAL -->
+        <div id="seviyeSonuModal"
+          class="hidden absolute inset-0 bg-white/95 backdrop-blur-sm rounded-3xl z-20 flex-col items-center justify-center text-center p-6 animate-fade-in shadow-xl">
+          <div
+            class="w-20 h-20 bg-green-100 text-green-600 rounded-full flex items-center justify-center mb-6 text-4xl shadow-inner animate-bounce">
+            🎉</div>
+          <h2 class="text-3xl font-bold text-slate-900 mb-2">Harika!</h2>
+          <p class="text-slate-600 mb-8 max-w-xs mx-auto">Tüm kelimeleri buldun ve seviyeyi tamamladın.</p>
+          <button id="sonrakiSeviyeBtn"
+            class="bg-brand-600 hover:bg-brand-700 text-white font-bold py-4 px-10 rounded-2xl shadow-xl shadow-brand-500/30 transition transform hover:scale-105 active:scale-95 text-lg w-full max-w-xs">
+            Sonraki Seviye
+          </button>
+        </div>
+      </div>
 
-        rastgeleHarflerleDoldur() {
-          const HARFLER = "ABCÇDEFGĞHIİJKLMNOÖPRSŞTUÜVYZ";
-          for (let r = 0; r < this.BOYUT; r++) {
-            for (let c = 0; c < this.BOYUT; c++) {
-              if (this.tahta[r][c] === this.BOS_ISARET) {
-                this.tahta[r][c] =
-                  HARFLER[this.rastgele(0, HARFLER.length - 1)];
-              }
-            }
-          }
-        }
-        tahtaCiz() {
-          this.elTahta.innerHTML = "";
-          for (let r = 0; r < this.BOYUT; r++) {
-            for (let c = 0; c < this.BOYUT; c++) {
-              const d = document.createElement("div");
-              d.className = "hucre";
-              if (this.tahta[r][c] === this.BOS_ISARET) {
-                d.classList.add("bos");
-                d.textContent = " ";
-              } else d.textContent = this.tahta[r][c];
+      <!-- Side Panel -->
+      <div class="w-full lg:w-80 flex flex-col gap-6">
 
-              d.dataset.r = r;
-              d.dataset.c = c;
+        <!-- Word List -->
+        <div class="bg-white p-6 rounded-3xl shadow-xl shadow-slate-200/50 border border-slate-100 flex-1">
+          <div class="flex justify-between items-baseline mb-4">
+            <h3 class="text-lg font-bold text-slate-800">Bulunacaklar</h3>
+            <span id="kalanKelimeSayisi"
+              class="text-xs font-medium bg-slate-100 text-slate-600 px-2 py-1 rounded-md"></span>
+          </div>
+          <div id="kelimeler" class="flex flex-wrap gap-2"></div>
+        </div>
 
-              // Desktop
-              d.addEventListener("mousedown", (e) => this.secimBaslat(e));
-              d.addEventListener("mouseenter", (e) => this.secimeEkle(e));
+        <!-- Controls -->
+        <div class="grid grid-cols-2 gap-3">
+          <button id="karistirDugme"
+            class="flex items-center justify-center gap-2 bg-white hover:bg-slate-50 text-slate-700 font-medium py-3 px-4 rounded-xl border border-slate-200 shadow-sm transition-all text-sm active:bg-slate-100">
+            <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none"
+              stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+              <path d="M21 16v5h-5" />
+              <path d="M3 8v5h5" />
+              <path d="M21 21l-4.22-4.22" />
+              <path d="M3 3l4.22 4.22" />
+              <path d="M9 13a5 5 0 0 1-3.6-8.4" />
+              <path d="M15 11a5 5 0 0 1 3.6 8.4" />
+            </svg>
+            Yenile
+          </button>
+          <button id="ipucuDugme"
+            class="flex items-center justify-center gap-2 bg-indigo-50 hover:bg-indigo-100 text-indigo-600 font-medium py-3 px-4 rounded-xl border border-indigo-100 shadow-sm transition-all text-sm active:bg-indigo-200">
+            <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none"
+              stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+              <circle cx="12" cy="12" r="10" />
+              <path d="M9.09 9a3 3 0 0 1 5.83 1c0 2-3 3-3 3" />
+              <path d="M12 17h.01" />
+            </svg>
+            İpucu
+          </button>
+        </div>
 
-              // Mobile
-              d.addEventListener("touchstart", (e) => {
-                e.preventDefault();
-                const touch = e.touches[0];
-                const hedef = document.elementFromPoint(
-                  touch.clientX,
-                  touch.clientY
-                );
-                if (hedef && hedef.classList.contains("hucre")) {
-                  this.secimBaslat({ currentTarget: hedef });
-                }
-              });
+        <div class="text-xs text-slate-400 text-center leading-relaxed px-4 opacity-70">
+          <p>Sürükle bırak ile kelimeleri birleştir.</p>
+        </div>
 
-              d.addEventListener("touchmove", (e) => {
-                e.preventDefault();
-                const touch = e.touches[0];
-                const hedef = document.elementFromPoint(
-                  touch.clientX,
-                  touch.clientY
-                );
-                if (hedef && hedef.classList.contains("hucre")) {
-                  this.secimeEkle({ currentTarget: hedef });
-                }
-              });
+      </div>
+    </main>
+  </div>
 
-              d.addEventListener("mouseover", (e) => e.preventDefault());
+  <script type="module" src="/src/main.js"></script>
+</body>
 
-              this.elTahta.appendChild(d);
-            }
-          }
-
-          // Mouse ve touch bırakma işlemleri
-          document.addEventListener("mouseup", () => this.secimiBitir());
-          document.addEventListener("touchend", () => this.secimiBitir());
-        }
-
-        kelimelerCiz() {
-          this.elKelimeler.innerHTML = "";
-          for (const y of this.yerlestirmeler) {
-            const span = document.createElement("span");
-            span.className = "kelime" + (y.bulundu ? " bulundu" : "");
-            span.textContent = y.kelime;
-            this.elKelimeler.appendChild(span);
-          }
-        }
-
-        secimBaslat(e) {
-          this.secimAktif = true;
-          this.yol = [];
-          this.hucreIsaretle(e.currentTarget, true);
-          this.yol.push(this.konumAl(e.currentTarget));
-        }
-
-        secimeEkle(e) {
-          if (!this.secimAktif) return;
-          const konum = this.konumAl(e.currentTarget);
-          const son = this.yol[this.yol.length - 1] || konum;
-          if (this.yol.length >= 2) {
-            const yon1 = this.yonBul(this.yol[0], this.yol[1]);
-            const yon2 = this.yonBul(this.yol[this.yol.length - 1], konum);
-            if (!(yon1.dr === yon2.dr && yon1.dc === yon2.dc)) return;
-          }
-          if (this.komsuMu(son, konum)) {
-            this.hucreIsaretle(e.currentTarget, true);
-            this.yol.push(konum);
-          }
-        }
-
-        secimiBitir() {
-          if (!this.secimAktif) return;
-          this.secimAktif = false;
-          const bulunan = this.yerlestirmeler.find(
-            (y) =>
-              !y.bulundu &&
-              (this.ayniHucreler(this.yol, y.hucreler) ||
-                this.ayniHucreler([...this.yol].reverse(), y.hucreler))
-          );
-          if (bulunan) {
-            bulunan.bulundu = true;
-            for (const { r, c } of bulunan.hucreler) {
-              this.hucreGetir(r, c).classList.remove("secili");
-              this.hucreGetir(r, c).classList.add("bulundu");
-            }
-            this.kelimelerCiz();
-            this.kontrolTamam();
-          } else {
-            for (const { r, c } of this.yol) {
-              this.hucreGetir(r, c).classList.remove("secili");
-            }
-          }
-          this.yol = [];
-        }
-
-        secimiIptal() {
-          if (!this.secimAktif) return;
-          this.secimAktif = false;
-          for (const { r, c } of this.yol) {
-            this.hucreGetir(r, c).classList.remove("secili");
-          }
-          this.yol = [];
-        }
-
-        konumAl(el) {
-          return { r: +el.dataset.r, c: +el.dataset.c };
-        }
-        hucreGetir(r, c) {
-          return this.elTahta.children[r * this.BOYUT + c];
-        }
-        hucreIsaretle(el, ac) {
-          el.classList.toggle("secili", ac);
-        }
-        komsuMu(a, b) {
-          return Math.max(Math.abs(a.r - b.r), Math.abs(a.c - b.c)) === 1;
-        }
-        yonBul(a, b) {
-          return { dr: Math.sign(b.r - a.r), dc: Math.sign(b.c - a.c) };
-        }
-        ayniHucreler(a, b) {
-          if (a.length !== b.length) return false;
-          for (let i = 0; i < a.length; i++) {
-            if (a[i].r !== b[i].r || a[i].c !== b[i].c) return false;
-          }
-          return true;
-        }
-
-        kontrolTamam() {
-          if (this.yerlestirmeler.every((y) => y.bulundu)) {
-            alert("Tebrikler. Tüm kelimeler bulundu.");
-          }
-        }
-
-        tumunuGoster() {
-          for (const y of this.yerlestirmeler) {
-            y.bulundu = true;
-            for (const { r, c } of y.hucreler) {
-              const el = this.hucreGetir(r, c);
-              el.classList.remove("secili");
-              el.classList.add("bulundu");
-            }
-          }
-          this.kelimelerCiz();
-        }
-
-        matrisOlustur(r, c, deger) {
-          return Array.from({ length: r }, () => Array(c).fill(deger));
-        }
-        rastgele(min, max) {
-          return Math.floor(Math.random() * (max - min + 1)) + min;
-        }
-        karistir(dizi) {
-          for (let i = dizi.length - 1; i > 0; i--) {
-            const j = this.rastgele(0, i);
-            [dizi[i], dizi[j]] = [dizi[j], dizi[i]];
-          }
-          return dizi;
-        }
-      }
-
-      const elTahta = document.getElementById("tahta");
-      const elKelimeler = document.getElementById("kelimeler");
-      const elKaristir = document.getElementById("karistirDugme");
-      const elCozum = document.getElementById("cozumDugme");
-
-      window.bulmaca = new CengelBulmaca(
-        10,
-        [
-          "JAVASCRIPT",
-          "DEGISKEN",
-          "DONGU",
-          "FONKSIYON",
-          "OBJE",
-          "DIZI",
-          "HATA",
-          "JSON",
-          "MODUL",
-          "OLAY",
-        ],
-        elTahta,
-        elKelimeler,
-        elKaristir,
-        elCozum
-      );
-    </script>
-  </body>
 </html>
