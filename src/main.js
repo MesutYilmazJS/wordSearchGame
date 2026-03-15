@@ -1,139 +1,35 @@
 import './style.css'
+import { SEVIYELER } from './levels.js'
+import { MobileBridge } from './mobileBridge.js'
 
-// Oyun Verileri - Seviyeler
-// Oyun Verileri - Seviyeler
-const SEVIYELER = [
-  // Seviye 1: Meyveler (Başlangıç)
-  {
-    seviye: 1,
-    boyut: 8,
-    kelimeler: ["ELMA", "ARMUT", "KIRAZ", "UZUM", "MUZ", "INCIR"]
-  },
-  // Seviye 2: Okul Eşyaları (Kolay)
-  {
-    seviye: 2,
-    boyut: 9,
-    kelimeler: ["KALEM", "DEFTER", "SILGI", "KITAP", "CANTA", "CETVEL"]
-  },
-  // Seviye 3: Renkler (Kolay)
-  {
-    seviye: 3,
-    boyut: 9,
-    kelimeler: ["KIRMIZI", "MAVI", "YESIL", "SARI", "MOR", "TURUNCU", "SIYAH"]
-  },
-  // Seviye 4: Hayvanlar (Kolay)
-  {
-    seviye: 4,
-    boyut: 10,
-    kelimeler: ["KEDI", "KOPEK", "ASLAN", "KAPLAN", "FIL", "ZURAFA", "AYI"]
-  },
-  // Seviye 5: Meslekler (Orta)
-  {
-    seviye: 5,
-    boyut: 10,
-    kelimeler: ["DOKTOR", "POLIS", "OGRETMEN", "MUHENDIS", "AVUKAT", "PILOT", "ASCI"]
-  },
-  // Seviye 6: Taşıtlar (Orta)
-  {
-    seviye: 6,
-    boyut: 10,
-    kelimeler: ["ARABA", "OTOBUS", "UCAK", "GEMI", "TREN", "BISIKLET", "KAMYON"]
-  },
-  // Seviye 7: Web Teknolojileri (Orta)
-  {
-    seviye: 7,
-    boyut: 11,
-    kelimeler: ["HTML", "CSS", "REACT", "VUE", "NODE", "ANGULAR", "PYTHON", "JAVA"]
-  },
-  // Seviye 8: Türkiye Şehirleri 1 (Orta)
-  {
-    seviye: 8,
-    boyut: 11,
-    kelimeler: ["ISTANBUL", "ANKARA", "IZMIR", "BURSA", "ADANA", "ANTALYA", "KONYA"]
-  },
-  // Seviye 9: Gezegenler (Orta)
-  {
-    seviye: 9,
-    boyut: 11,
-    kelimeler: ["MERKUR", "VENUS", "DUNYA", "MARS", "JUPITER", "SATURN", "URANUS"]
-  },
-  // Seviye 10: Spor Dalları (Orta - Zor)
-  {
-    seviye: 10,
-    boyut: 12,
-    kelimeler: ["FUTBOL", "BASKETBOL", "VOLEYBOL", "TENIS", "YUZME", "GURES", "HENTBOL"]
-  },
-  // Seviye 11: Mutfak Eşyaları (Orta - Zor)
-  {
-    seviye: 11,
-    boyut: 12,
-    kelimeler: ["TABAK", "CATAL", "KASIK", "BICAK", "TENCERE", "TAVA", "BARDAK", "SURAHI"]
-  },
-  // Seviye 12: Bilgisayar Parçaları (Zor)
-  {
-    seviye: 12,
-    boyut: 12,
-    kelimeler: ["EKRAN", "KLAVYE", "FARE", "ISLEMCI", "RAM", "DISK", "KASA", "FAN"]
-  },
-  // Seviye 13: Duygular (Zor)
-  {
-    seviye: 13,
-    boyut: 12,
-    kelimeler: ["MUTLU", "UZGUN", "KIZGIN", "SASKEN", "KORKMUS", "HEYECANLI", "ENDISELI"]
-  },
-  // Seviye 14: Hava Durumu (Zor)
-  {
-    seviye: 14,
-    boyut: 13,
-    kelimeler: ["GUNESLI", "YAGMURLU", "KARLI", "RUZGARLI", "BULUTLU", "SISLI", "DOLU"]
-  },
-  // Seviye 15: Müzik Aletleri (Zor)
-  {
-    seviye: 15,
-    boyut: 13,
-    kelimeler: ["GITAR", "PIYANO", "KEMAN", "DAVUL", "FLUT", "SAKSAFON", "TROMPET"]
-  },
-  // Seviye 16: Ülkeler (Çok Zor)
-  {
-    seviye: 16,
-    boyut: 13,
-    kelimeler: ["TURKIYE", "ALMANYA", "FRANSA", "ITALYA", "ISPANYA", "JAPONYA", "BREZILYA", "KANADA"]
-  },
-  // Seviye 17: Sebzeler (Çok Zor)
-  {
-    seviye: 17,
-    boyut: 14,
-    kelimeler: ["DOMATES", "PATATES", "SOGAN", "BIBER", "PATLICAN", "HAVUC", "ISPANAK", "PIRASA"]
-  },
-  // Seviye 18: Kıyafetler (Çok Zor)
-  {
-    seviye: 18,
-    boyut: 14,
-    kelimeler: ["GOMLEK", "PANTOLON", "CEKET", "KAZAK", "ETEK", "ELBISE", "SAPKA", "ELDIVEN"]
-  },
-  // Seviye 19: Geometrik Şekiller (Uzman)
-  {
-    seviye: 19,
-    boyut: 14,
-    kelimeler: ["KARE", "UCGEN", "DAIRE", "DIKDORTGEN", "BESGEN", "ALTIGEN", "SILINDIR", "KURE"]
-  },
-  // Seviye 20: Karışık Final (Uzman)
-  {
-    seviye: 20,
-    boyut: 15,
-    kelimeler: ["SAMPIYON", "EFSANE", "BASARI", "ZAFER", "KUTLAMA", "ODUL", "KUPA", "MADALYA", "FINALE"]
-  }
+const KAYIT_ANAHTARI = "kelime-avi-kayit";
+const TAMAMLANAN_SEVIYELER_ANAHTARI = "kelime-avi-tamamlanan-seviyeler";
+const TEMA_ANAHTARI = "kelime-avi-tema";
+const TEMA_SECENEKLERI = ["ocean", "sunset", "forest", "berry"];
+const UCRETSIZ_TEMALAR = ["ocean", "forest"];
+const MAGAZA_ANAHTARI = "kelime-avi-magaza";
+const HARF_STILLERI = [
+  { id: "standart", ad: "Standart", aciklama: "Temiz ve klasik gorunum." },
+  { id: "neon", ad: "Neon", aciklama: "Parlak kenarlar ve guclu renk vurgusu." },
+  { id: "retro", ad: "Retro", aciklama: "Sicak tonlar ve arcade hissi." },
+  { id: "cocuk", ad: "Cocuk", aciklama: "Daha egeli ve oyunlu bir stil." }
 ];
-
+const MAGAZA_URUNLERI = [
+  { id: "theme_pack", tip: "tema", ad: "Tema Paketi", aciklama: "Yeni premium tema paletleri ekler.", fiyat: "19.99 TL" },
+  { id: "letter_styles", tip: "stil", ad: "Harf Stilleri", aciklama: "Tahtadaki harflere ozel font ve rozet stilleri ekler.", fiyat: "24.99 TL" },
+  { id: "ad_free", tip: "destek", ad: "Reklamsiz Surum", aciklama: "Gecis reklamlarini kaldirir, odullu reklam istege bagli kalir.", fiyat: "79.99 TL" }
+];
 
 class CengelBulmaca {
   constructor(config) {
     this.elTahta = config.elTahta;
     this.elKelimeler = config.elKelimeler;
     this.elSeviyeGostergesi = config.elSeviyeGostergesi;
+    this.elSeviyeAdi = config.elSeviyeAdi;
     this.elSeviyeSonuModal = config.elSeviyeSonuModal;
     this.elSonrakiBtn = config.elSonrakiBtn;
     this.elKalanSayisi = config.elKalanSayisi;
+    this.seviyeTamamlandiCallback = config.seviyeTamamlandiCallback || (() => {});
 
     this.aktifSeviyeIndex = 0;
     this.veriler = null;
@@ -142,12 +38,12 @@ class CengelBulmaca {
     this.yerlestirmeler = [];
     this.secimAktif = false;
     this.yol = [];
-    this.BOS_ISARET = ""; 
+    this.BOS_ISARET = "";
+    this.harfStili = "standart";
 
     // Event Listeners
     this.elSonrakiBtn.onclick = () => this.sonrakiSeviye();
     document.getElementById('karistirDugme').onclick = () => this.seviyeyiYukle(this.aktifSeviyeIndex);
-    document.getElementById('ipucuDugme').onclick = () => this.ipucuVer();
     
     this.elTahta.addEventListener("mouseleave", () => this.secimiIptal());
     document.addEventListener("mouseup", () => this.secimiBitir());
@@ -157,13 +53,25 @@ class CengelBulmaca {
     // this.seviyeyiYukle(0);
   }
 
-  baslat() {
-      this.seviyeyiYukle(0);
+  baslat(index = 0) {
+      this.harfStiliniUygula();
+      this.seviyeyiYukle(index);
+  }
+
+  harfStiliniUygula() {
+      try {
+          const veri = JSON.parse(localStorage.getItem(MAGAZA_ANAHTARI) || "{}");
+          const stil = veri.seciliHarfStili || "standart";
+          this.harfStili = HARF_STILLERI.some((item) => item.id === stil) ? stil : "standart";
+      } catch {
+          this.harfStili = "standart";
+      }
   }
 
   seviyeyiYukle(index) {
     if (index >= SEVIYELER.length) {
       alert("Oyun bitti! Tebrikler, tüm seviyeleri tamamladınız.");
+      this.ilerlemeyiTemizle();
       this.aktifSeviyeIndex = 0;
       index = 0;
       // İsteğe bağlı: Ana menüye de atılabilir.
@@ -175,6 +83,7 @@ class CengelBulmaca {
     
     // UI Güncelle
     this.elSeviyeGostergesi.textContent = this.veriler.seviye;
+    this.elSeviyeAdi.textContent = this.veriler.ad;
     this.elSeviyeSonuModal.classList.add('hidden');
     this.elSeviyeSonuModal.classList.remove('flex');
     
@@ -185,6 +94,7 @@ class CengelBulmaca {
     this.tahtaCiz();
     this.kelimelerUIOlustur();
     this.kalanGuncelle();
+    this.ilerlemeyiKaydet();
   }
 
   tahtayiOlusturGuvenli() {
@@ -344,14 +254,13 @@ class CengelBulmaca {
       for (let c = 0; c < this.boyut; c++) {
         const d = document.createElement("div");
         d.className = `
-          relative flex items-center justify-center 
+          board-cell board-style-${this.harfStili} relative flex items-center justify-center 
           aspect-square 
           ${stilSiniflari}
-          bg-slate-50 text-slate-700 
           font-bold 
           cursor-pointer select-none transition-transform duration-150
-          hover:bg-slate-100 active:scale-95
-          shadow-sm border border-slate-200/50
+          active:scale-95
+          shadow-sm
           animate-pop
         `;
         
@@ -479,12 +388,9 @@ class CengelBulmaca {
       const etiket = document.getElementById(`kelime-${index}`);
       etiket.className = 'px-3 py-1.5 rounded-lg text-sm font-medium transition-all duration-300 bg-green-100 text-green-700 line-through opacity-75 ring-1 ring-green-200';
       
-      for (const {r, c} of bulunan.hucreler) {
-          const el = this.hucreGetir(r, c);
-          el.classList.remove('bg-brand-500', 'text-white', 'scale-105', 'bg-slate-50', 'text-slate-700');
-          el.classList.add('bg-green-500', 'text-white', 'shadow-md', 'scale-100');
-      }
+      this.hucreleriBulunmusGoster(bulunan.hucreler);
       this.kalanGuncelle();
+      this.ilerlemeyiKaydet();
   }
 
   secimiTemizle() {
@@ -494,8 +400,8 @@ class CengelBulmaca {
           if (!bulunduMu) {
               this.hucreGorselGuncelle(el, false);
           } else {
-              el.classList.remove('bg-brand-500', 'scale-105');
-              el.classList.add('bg-green-500');
+              el.classList.remove('board-cell-selected');
+              el.classList.add('board-cell-found');
           }
       }
   }
@@ -506,11 +412,10 @@ class CengelBulmaca {
 
   hucreGorselGuncelle(el, secili) {
       if (secili) {
-          el.classList.remove('bg-slate-50', 'text-slate-700', 'bg-green-500'); 
-          el.classList.add('bg-brand-500', 'text-white', 'scale-105', 'z-10', 'shadow-lg');
+          el.classList.remove('board-cell-found');
+          el.classList.add('board-cell-selected');
       } else {
-          el.classList.remove('bg-brand-500', 'text-white', 'scale-105', 'z-10', 'shadow-lg');
-          el.classList.add('bg-slate-50', 'text-slate-700');
+          el.classList.remove('board-cell-selected');
       }
   }
 
@@ -535,6 +440,8 @@ class CengelBulmaca {
 
   kontrolSeviyeBittiMi() {
       if (this.yerlestirmeler.every(y => y.bulundu)) {
+          this.tamamlananSeviyeyiKaydet(this.aktifSeviyeIndex);
+          this.seviyeTamamlandiCallback(this.aktifSeviyeIndex);
           setTimeout(() => {
               this.elSeviyeSonuModal.classList.remove('hidden');
               this.elSeviyeSonuModal.classList.add('flex');
@@ -546,54 +453,629 @@ class CengelBulmaca {
       this.seviyeyiYukle(this.aktifSeviyeIndex + 1);
   }
 
-  ipucuVer() {
+  ilkHarfiGoster() {
       const bulunmamislar = this.yerlestirmeler.filter(y => !y.bulundu);
-      if(bulunmamislar.length === 0) return;
+      if(bulunmamislar.length === 0) return false;
 
       const hedef = bulunmamislar[Math.floor(Math.random() * bulunmamislar.length)];
       const harf = hedef.hucreler[0];
       const el = this.hucreGetir(harf.r, harf.c);
-      
-      el.classList.add('ring-4', 'ring-yellow-400', 'animate-pulse');
-      setTimeout(() => el.classList.remove('ring-4', 'ring-yellow-400', 'animate-pulse'), 1500);
+      if (!el) return false;
+
+      el.classList.add('ring-4', 'ring-offset-2', 'ring-offset-white', 'ring-yellow-400', 'scale-110');
+      setTimeout(() => el.classList.remove('ring-4', 'ring-offset-2', 'ring-offset-white', 'ring-yellow-400', 'scale-110'), 2200);
+      return true;
   }
 
   kalanGuncelle() {
       const kalan = this.yerlestirmeler.filter(y => !y.bulundu).length;
       this.elKalanSayisi.textContent = `${kalan} Kelime`;
   }
+
+  ilerlemeyiKaydet() {
+      localStorage.setItem(KAYIT_ANAHTARI, JSON.stringify({
+          aktifSeviyeIndex: this.aktifSeviyeIndex,
+          boyut: this.boyut,
+          tahta: this.tahta,
+          yerlestirmeler: this.yerlestirmeler,
+          sonGuncelleme: Date.now()
+      }));
+  }
+
+  ilerlemeyiTemizle() {
+      localStorage.removeItem(KAYIT_ANAHTARI);
+  }
+
+  tamamlananSeviyeyiKaydet(seviyeIndex) {
+      const tamamlananlar = this.tamamlananSeviyeleriGetir();
+      if (!tamamlananlar.includes(seviyeIndex)) {
+          tamamlananlar.push(seviyeIndex);
+          localStorage.setItem(TAMAMLANAN_SEVIYELER_ANAHTARI, JSON.stringify(tamamlananlar.sort((a, b) => a - b)));
+      }
+  }
+
+  tamamlananSeviyeleriGetir() {
+      try {
+          const veri = JSON.parse(localStorage.getItem(TAMAMLANAN_SEVIYELER_ANAHTARI) || "[]");
+          return Array.isArray(veri) ? veri.filter((item) => Number.isInteger(item)) : [];
+      } catch {
+          return [];
+      }
+  }
+
+  kayittanYukle(kayit) {
+      const seviye = SEVIYELER[kayit.aktifSeviyeIndex];
+      if (!seviye) return false;
+      if (!Array.isArray(kayit.tahta) || !Array.isArray(kayit.yerlestirmeler)) return false;
+
+      this.aktifSeviyeIndex = kayit.aktifSeviyeIndex;
+      this.veriler = seviye;
+      this.boyut = kayit.boyut || seviye.boyut;
+      this.tahta = kayit.tahta.map((satir) => Array.isArray(satir) ? [...satir] : []);
+      this.yerlestirmeler = kayit.yerlestirmeler.map((yerlesim) => ({
+          kelime: yerlesim.kelime,
+          bulundu: Boolean(yerlesim.bulundu),
+          hucreler: Array.isArray(yerlesim.hucreler)
+              ? yerlesim.hucreler.map((hucre) => ({ r: hucre.r, c: hucre.c }))
+              : []
+      }));
+      this.secimAktif = false;
+      this.yol = [];
+
+      this.elSeviyeGostergesi.textContent = this.veriler.seviye;
+      this.elSeviyeAdi.textContent = this.veriler.ad;
+      this.elSeviyeSonuModal.classList.add('hidden');
+      this.elSeviyeSonuModal.classList.remove('flex');
+
+      this.gridGorunumunuAyarla();
+      this.tahtaCiz();
+      this.kelimelerUIOlustur();
+      this.kalanGuncelle();
+      this.bulunanlariYenidenCiz();
+      return true;
+  }
+
+  gridGorunumunuAyarla() {
+      this.elTahta.style.gridTemplateColumns = `repeat(${this.boyut}, 1fr)`;
+
+      if (this.boyut >= 14) {
+          this.elTahta.className = "grid gap-px mx-auto touch-none";
+      } else if (this.boyut >= 10) {
+          this.elTahta.className = "grid gap-0.5 md:gap-1 mx-auto touch-none";
+      } else {
+          this.elTahta.className = "grid gap-1.5 md:gap-2 mx-auto touch-none";
+      }
+  }
+
+  hucreleriBulunmusGoster(hucreler) {
+      for (const {r, c} of hucreler) {
+          const el = this.hucreGetir(r, c);
+          if (!el) continue;
+          el.classList.remove('board-cell-selected');
+          el.classList.add('board-cell-found');
+      }
+  }
+
+  bulunanlariYenidenCiz() {
+      this.yerlestirmeler
+          .filter((yerlesim) => yerlesim.bulundu)
+          .forEach((yerlesim) => this.hucreleriBulunmusGoster(yerlesim.hucreler));
+  }
 }
 
-document.addEventListener('DOMContentLoaded', () => {
+document.addEventListener('DOMContentLoaded', async () => {
     // UI Elemanları
     const girisEkrani = document.getElementById('girisEkrani');
     const oyunEkrani = document.getElementById('oyunEkrani');
     const oyunaBaslaBtn = document.getElementById('oyunaBaslaBtn');
+    const devamEtBtn = document.getElementById('devamEtBtn');
+    const levellerBtn = document.getElementById('levellerBtn');
+    const magazaBtn = document.getElementById('magazaBtn');
+    const ayarlarBtn = document.getElementById('ayarlarBtn');
     const anaMenuyeDonBtn = document.getElementById('anaMenuyeDonBtn');
-    
+    const bilgiModal = document.getElementById('bilgiModal');
+    const bilgiModalEtiket = document.getElementById('bilgiModalEtiket');
+    const bilgiModalBaslik = document.getElementById('bilgiModalBaslik');
+    const bilgiModalMesaj = document.getElementById('bilgiModalMesaj');
+    const bilgiModalKapatBtn = document.getElementById('bilgiModalKapatBtn');
+    const levellerModal = document.getElementById('levellerModal');
+    const levellerListesi = document.getElementById('levellerListesi');
+    const levellerModalKapatBtn = document.getElementById('levellerModalKapatBtn');
+    const ayarlarModal = document.getElementById('ayarlarModal');
+    const ayarlarModalKapatBtn = document.getElementById('ayarlarModalKapatBtn');
+    const temaSecenekleri = [...document.querySelectorAll('[data-theme]')];
+    const ipucuDugme = document.getElementById('ipucuDugme');
+    const ilerlemeSifirlaBtn = document.getElementById('ilerlemeSifirlaBtn');
+    const magazaModal = document.getElementById('magazaModal');
+    const magazaListesi = document.getElementById('magazaListesi');
+    const magazaModalKapatBtn = document.getElementById('magazaModalKapatBtn');
+    const reklamModal = document.getElementById('reklamModal');
+    const reklamEtiket = document.getElementById('reklamEtiket');
+    const reklamBaslik = document.getElementById('reklamBaslik');
+    const reklamMesaj = document.getElementById('reklamMesaj');
+    const reklamSayac = document.getElementById('reklamSayac');
+    const reklamIptalBtn = document.getElementById('reklamIptalBtn');
+    const reklamOnayBtn = document.getElementById('reklamOnayBtn');
+    const mobileBridge = new MobileBridge();
     // Oyun örneği
     const oyun = new CengelBulmaca({
       elTahta: document.getElementById('tahta'),
       elKelimeler: document.getElementById('kelimeler'),
       elSeviyeGostergesi: document.getElementById('seviyeGostergesi'),
+      elSeviyeAdi: document.getElementById('seviyeAdi'),
       elSeviyeSonuModal: document.getElementById('seviyeSonuModal'),
       elSonrakiBtn: document.getElementById('sonrakiSeviyeBtn'),
-      elKalanSayisi: document.getElementById('kalanKelimeSayisi')
+      elKalanSayisi: document.getElementById('kalanKelimeSayisi'),
+      seviyeTamamlandiCallback: () => {
+          if (!mobileBridge.hasProduct('ad_free')) {
+              mobileBridge.registerLevelCompletion();
+          }
+      }
     });
 
-    // Event Listeners for Screens
-    oyunaBaslaBtn.addEventListener('click', () => {
+    const kayitliIlerleme = () => {
+        const hamVeri = localStorage.getItem(KAYIT_ANAHTARI);
+        if (!hamVeri) return null;
+
+        try {
+            const veri = JSON.parse(hamVeri);
+            if (typeof veri.aktifSeviyeIndex !== "number") return null;
+            if (veri.aktifSeviyeIndex < 0 || veri.aktifSeviyeIndex >= SEVIYELER.length) return null;
+            return veri;
+        } catch {
+            return null;
+        }
+    };
+
+    const magazaDurumuGetir = () => {
+        try {
+            const veri = JSON.parse(localStorage.getItem(MAGAZA_ANAHTARI) || "{}");
+            return {
+                satinAlinanlar: mobileBridge.getOwnedProducts(),
+                seciliHarfStili: veri.seciliHarfStili || "standart"
+            };
+        } catch {
+            return { satinAlinanlar: mobileBridge.getOwnedProducts(), seciliHarfStili: "standart" };
+        }
+    };
+
+    const magazaDurumuKaydet = (durum) => {
+        localStorage.setItem(MAGAZA_ANAHTARI, JSON.stringify({
+            seciliHarfStili: durum.seciliHarfStili || "standart"
+        }));
+    };
+
+    const devamEtDurumunuGuncelle = () => {
+        devamEtBtn.disabled = !kayitliIlerleme();
+    };
+
+    const reklamsizMi = () => mobileBridge.hasProduct("ad_free");
+    const temaPaketiVarMi = () => magazaDurumuGetir().satinAlinanlar.includes("theme_pack");
+    const temaKullanilabilirMi = (tema) => UCRETSIZ_TEMALAR.includes(tema) || temaPaketiVarMi();
+    const ekraniAc = (baslangicSeviyesi) => {
         girisEkrani.classList.add('hidden');
         oyunEkrani.classList.remove('hidden');
         oyunEkrani.classList.add('flex');
-        
-        // Oyunu başlat (veya yenile)
-        oyun.baslat();
+        oyun.harfStiliniUygula();
+        oyun.baslat(baslangicSeviyesi);
+        devamEtDurumunuGuncelle();
+    };
+
+    const bilgiModalAc = ({ etiket, baslik, mesaj }) => {
+        bilgiModalEtiket.textContent = etiket;
+        bilgiModalBaslik.textContent = baslik;
+        bilgiModalMesaj.textContent = mesaj;
+        bilgiModal.classList.remove('hidden');
+        bilgiModal.classList.add('flex');
+    };
+
+    const bilgiModalKapat = () => {
+        bilgiModal.classList.add('hidden');
+        bilgiModal.classList.remove('flex');
+    };
+
+    let reklamOnayi = null;
+    let reklamSayacSureci = null;
+
+    const reklamModalKapat = () => {
+        reklamModal.classList.add('hidden');
+        reklamModal.classList.remove('flex');
+        reklamOnayi = null;
+        if (reklamSayacSureci) {
+            clearInterval(reklamSayacSureci);
+            reklamSayacSureci = null;
+        }
+    };
+
+    const reklamModalAc = ({ etiket, baslik, mesaj, onComplete }) => {
+        reklamOnayi = onComplete;
+        reklamEtiket.textContent = etiket;
+        reklamBaslik.textContent = baslik;
+        reklamMesaj.textContent = mesaj;
+        reklamSayac.textContent = "3 sn";
+        reklamModal.classList.remove('hidden');
+        reklamModal.classList.add('flex');
+
+        let kalan = 3;
+        reklamOnayBtn.disabled = true;
+        reklamOnayBtn.classList.add('opacity-60');
+
+        reklamSayacSureci = setInterval(() => {
+            kalan -= 1;
+            reklamSayac.textContent = kalan > 0 ? `${kalan} sn` : "Hazir";
+            if (kalan <= 0) {
+                clearInterval(reklamSayacSureci);
+                reklamSayacSureci = null;
+                reklamOnayBtn.disabled = false;
+                reklamOnayBtn.classList.remove('opacity-60');
+            }
+        }, 1000);
+    };
+
+    const reklamFallbackAkisi = (ayarlar) => new Promise((resolve) => {
+        reklamModalAc({
+            ...ayarlar,
+            onComplete: () => {
+                reklamModalKapat();
+                resolve();
+            }
+        });
     });
+
+    const aktifTemayiGetir = () => {
+        const tema = localStorage.getItem(TEMA_ANAHTARI) || "ocean";
+        if (!TEMA_SECENEKLERI.includes(tema)) return "ocean";
+        return temaKullanilabilirMi(tema) ? tema : "ocean";
+    };
+
+    const temaSeciminiGuncelle = (aktifTema) => {
+        temaSecenekleri.forEach((dugme) => {
+            const tema = dugme.dataset.theme;
+            const kilitli = !temaKullanilabilirMi(tema);
+            dugme.classList.toggle('active', tema === aktifTema);
+            dugme.disabled = kilitli;
+            dugme.classList.toggle('opacity-60', kilitli);
+            dugme.classList.toggle('cursor-not-allowed', kilitli);
+
+            let rozet = dugme.querySelector('[data-theme-badge]');
+            if (!rozet) {
+                rozet = document.createElement('div');
+                rozet.dataset.themeBadge = 'true';
+                rozet.className = 'mt-2 text-[11px] font-bold uppercase tracking-[0.16em]';
+                dugme.appendChild(rozet);
+            }
+            rozet.textContent = kilitli ? 'Tema Paketi' : (UCRETSIZ_TEMALAR.includes(tema) ? 'Ucretsiz' : 'Acik');
+            rozet.className = `mt-2 text-[11px] font-bold uppercase tracking-[0.16em] ${kilitli ? 'text-amber-500' : 'text-slate-400'}`;
+        });
+    };
+
+    const temayiUygula = (tema) => {
+        const aktifTema = TEMA_SECENEKLERI.includes(tema) && temaKullanilabilirMi(tema) ? tema : "ocean";
+        document.body.classList.remove(...TEMA_SECENEKLERI.map((ad) => `theme-${ad}`));
+        document.body.classList.add(`theme-${aktifTema}`);
+        localStorage.setItem(TEMA_ANAHTARI, aktifTema);
+        temaSeciminiGuncelle(aktifTema);
+    };
+
+    const levellerModalAc = () => {
+        levelleriCiz();
+        levellerModal.classList.remove('hidden');
+        levellerModal.classList.add('flex');
+    };
+
+    const levellerModalKapat = () => {
+        levellerModal.classList.add('hidden');
+        levellerModal.classList.remove('flex');
+    };
+
+    const ayarlarModalAc = () => {
+        temaSeciminiGuncelle(aktifTemayiGetir());
+        ayarlarModal.classList.remove('hidden');
+        ayarlarModal.classList.add('flex');
+    };
+
+    const ayarlarModalKapat = () => {
+        ayarlarModal.classList.add('hidden');
+        ayarlarModal.classList.remove('flex');
+    };
+
+    const magazaModalAc = () => {
+        magazaListesiniCiz();
+        magazaModal.classList.remove('hidden');
+        magazaModal.classList.add('flex');
+    };
+
+    const magazaModalKapat = () => {
+        magazaModal.classList.add('hidden');
+        magazaModal.classList.remove('flex');
+    };
+
+    const seviyedenBaslat = (seviyeIndex) => {
+        levellerModalKapat();
+        girisEkrani.classList.add('hidden');
+        oyunEkrani.classList.remove('hidden');
+        oyunEkrani.classList.add('flex');
+        oyun.baslat(seviyeIndex);
+        devamEtDurumunuGuncelle();
+    };
+
+    const levelleriCiz = () => {
+        const tamamlananlar = new Set(oyun.tamamlananSeviyeleriGetir());
+        const aktifKayit = kayitliIlerleme();
+
+        levellerListesi.innerHTML = "";
+
+        SEVIYELER.forEach((seviye, index) => {
+            const tamamlandi = tamamlananlar.has(index);
+            const devamEdilen = aktifKayit?.aktifSeviyeIndex === index;
+            const oynanabilir = index === 0 || tamamlandi;
+            const kart = document.createElement('button');
+            const kartSinifi = oynanabilir
+                ? tamamlandi
+                    ? 'border-green-200 bg-green-50 shadow-sm shadow-green-100/70'
+                    : 'border-slate-200 bg-slate-50 hover:bg-white hover:border-sky-200'
+                : 'border-slate-200 bg-slate-100 opacity-60 cursor-not-allowed';
+
+            kart.type = 'button';
+            kart.className = `
+              w-full rounded-3xl border p-4 text-left transition
+              ${kartSinifi}
+            `;
+            kart.disabled = !oynanabilir;
+
+            kart.innerHTML = `
+              <div class="flex items-start justify-between gap-3">
+                <div>
+                  <div class="text-xs font-bold uppercase tracking-[0.2em] ${tamamlandi ? 'text-green-500' : oynanabilir ? 'text-slate-400' : 'text-slate-300'}">Seviye ${seviye.seviye}</div>
+                  <div class="mt-1 text-lg font-bold text-slate-900">${seviye.ad}</div>
+                  <div class="mt-2 text-sm text-slate-500">${seviye.kelimeler.length} kelime • ${seviye.boyut}x${seviye.boyut}</div>
+                </div>
+                <div class="flex min-w-[72px] justify-end">
+                  ${tamamlandi
+                    ? '<span class="inline-flex h-10 w-10 items-center justify-center rounded-2xl bg-green-500 text-lg text-white">✓</span>'
+                    : !oynanabilir
+                      ? '<span class="rounded-2xl bg-slate-300 px-3 py-2 text-xs font-bold text-slate-600">Kilitli</span>'
+                    : devamEdilen
+                      ? '<span class="rounded-2xl bg-sky-100 px-3 py-2 text-xs font-bold text-sky-700">Devam</span>'
+                      : '<span class="rounded-2xl bg-slate-200 px-3 py-2 text-xs font-bold text-slate-500">Ac</span>'}
+                </div>
+              </div>
+            `;
+
+            if (oynanabilir) {
+                kart.addEventListener('click', () => seviyedenBaslat(index));
+            }
+            levellerListesi.appendChild(kart);
+        });
+    };
+
+    const magazaListesiniCiz = () => {
+        const durum = magazaDurumuGetir();
+        magazaListesi.innerHTML = "";
+
+        MAGAZA_URUNLERI.forEach((urun) => {
+            const satinAlindi = durum.satinAlinanlar.includes(urun.id);
+            const kart = document.createElement('div');
+            kart.className = "app-card-muted rounded-3xl p-5";
+            kart.innerHTML = `
+              <div class="flex items-start justify-between gap-4">
+                <div>
+                  <div class="text-xs font-bold uppercase tracking-[0.2em] app-faint-text">${urun.tip}</div>
+                  <h3 class="mt-2 text-xl font-bold text-slate-900">${urun.ad}</h3>
+                  <p class="mt-2 text-sm leading-6 app-muted-text">${urun.aciklama}</p>
+                </div>
+                <div class="rounded-2xl brand-soft-bg px-3 py-2 text-sm font-bold">${urun.fiyat}</div>
+              </div>
+              <button data-product-id="${urun.id}" class="${satinAlindi ? 'app-soft-button' : 'brand-bg'} mt-5 w-full rounded-2xl px-4 py-3 text-sm font-semibold transition">
+                ${satinAlindi ? 'Aktif' : 'Demo Satin Al'}
+              </button>
+              ${urun.id === 'letter_styles' && satinAlindi ? `
+                <div class="mt-4 grid grid-cols-2 gap-2">
+                  ${HARF_STILLERI.map((stil) => `
+                    <button data-letter-style="${stil.id}" class="store-choice ${durum.seciliHarfStili === stil.id ? 'active' : ''} rounded-2xl px-3 py-3 text-left text-sm font-semibold transition">
+                      <div>${stil.ad}</div>
+                      <div class="mt-1 text-xs app-faint-text">${stil.aciklama}</div>
+                    </button>
+                  `).join('')}
+                </div>
+              ` : ''}
+            `;
+
+            const buton = kart.querySelector('[data-product-id]');
+            buton.addEventListener('click', async () => {
+                if (satinAlindi) return;
+                const satinAlim = await mobileBridge.purchaseProduct(urun.id);
+                if (!satinAlim.success) return;
+
+                const yeniDurum = magazaDurumuGetir();
+                if (urun.id === 'letter_styles') {
+                    yeniDurum.seciliHarfStili = yeniDurum.seciliHarfStili || 'standart';
+                }
+                magazaDurumuKaydet(yeniDurum);
+                magazaListesiniCiz();
+                oyun.harfStiliniUygula();
+                if (!oyunEkrani.classList.contains('hidden') && oyun.veriler) {
+                    oyun.tahtaCiz();
+                    oyun.kelimelerUIOlustur();
+                    oyun.bulunanlariYenidenCiz();
+                }
+                bilgiModalAc({
+                    etiket: 'Magaza',
+                    baslik: `${urun.ad} etkinlestirildi`,
+                    mesaj: satinAlim.source === 'capacitor'
+                        ? 'Satin alma mobil odeme sistemi uzerinden dogrulandi.'
+                        : 'Bu su an simulator satin alma akisi. Capacitor tarafinda gercek odeme baglaninca ayni kopru kullanilacak.'
+                });
+            });
+
+            kart.querySelectorAll('[data-letter-style]').forEach((stilButonu) => {
+                stilButonu.addEventListener('click', () => {
+                    const yeniDurum = magazaDurumuGetir();
+                    yeniDurum.seciliHarfStili = stilButonu.dataset.letterStyle;
+                    magazaDurumuKaydet(yeniDurum);
+                    magazaListesiniCiz();
+                    oyun.harfStiliniUygula();
+                    if (!oyunEkrani.classList.contains('hidden') && oyun.veriler) {
+                        oyun.tahtaCiz();
+                        oyun.kelimelerUIOlustur();
+                        oyun.bulunanlariYenidenCiz();
+                    }
+                });
+            });
+
+            magazaListesi.appendChild(kart);
+        });
+    };
+
+    const seviyelerArasiReklamGoster = (sonrakiAdim) => {
+        if (reklamsizMi() || !mobileBridge.shouldShowInterstitial()) {
+            sonrakiAdim();
+            return;
+        }
+
+        mobileBridge.showInterstitial(() => reklamFallbackAkisi({
+            etiket: 'Gecis Reklami',
+            baslik: 'Kisa bir mola',
+            mesaj: 'Arka arkaya 2 veya 3 seviye gecildiginde zorunlu reklam gosterilir. Reklamsiz surum satin alinirse bu ekran kalkar.'
+        })).then(sonrakiAdim);
+    };
+
+    const odulluReklamliIlkHarf = () => {
+        if (reklamsizMi()) {
+            oyun.ilkHarfiGoster();
+            return;
+        }
+
+        mobileBridge.showRewarded(() => reklamFallbackAkisi({
+            etiket: 'Odullu Reklam',
+            baslik: 'Ilk harf ipucu',
+            mesaj: 'Kisa reklami izlersen bulunmamis kelimelerden birinin ilk harfini isaretleyecegim.'
+        })).then(() => {
+            const basarili = oyun.ilkHarfiGoster();
+            if (!basarili) {
+                bilgiModalAc({
+                    etiket: 'Ipucu',
+                    baslik: 'Tum kelimeler bulundu',
+                    mesaj: 'Bu seviyede artik ilk harf ipucuna ihtiyac kalmadi.'
+                });
+            }
+        });
+    };
+
+    // Event Listeners for Screens
+    oyunaBaslaBtn.addEventListener('click', () => {
+        oyun.ilerlemeyiTemizle();
+        ekraniAc(0);
+    });
+
+    devamEtBtn.addEventListener('click', () => {
+        const kayit = kayitliIlerleme();
+        if (!kayit) return;
+
+        girisEkrani.classList.add('hidden');
+        oyunEkrani.classList.remove('hidden');
+        oyunEkrani.classList.add('flex');
+
+        const yuklendi = oyun.kayittanYukle(kayit);
+        if (!yuklendi) {
+            oyun.ilerlemeyiTemizle();
+            ekraniAc(0);
+            return;
+        }
+
+        oyun.harfStiliniUygula();
+        oyun.tahtaCiz();
+        oyun.kelimelerUIOlustur();
+        oyun.bulunanlariYenidenCiz();
+        devamEtDurumunuGuncelle();
+    });
+
+    levellerBtn.addEventListener('click', levellerModalAc);
+
+    magazaBtn.addEventListener('click', magazaModalAc);
+
+    ayarlarBtn.addEventListener('click', ayarlarModalAc);
+    ipucuDugme.addEventListener('click', odulluReklamliIlkHarf);
+    oyun.elSonrakiBtn.onclick = () => seviyelerArasiReklamGoster(() => oyun.sonrakiSeviye());
 
     anaMenuyeDonBtn.addEventListener('click', () => {
         oyunEkrani.classList.add('hidden');
         oyunEkrani.classList.remove('flex');
         girisEkrani.classList.remove('hidden');
+        devamEtDurumunuGuncelle();
     });
+
+    bilgiModalKapatBtn.addEventListener('click', bilgiModalKapat);
+    bilgiModal.addEventListener('click', (event) => {
+        if (event.target === bilgiModal) {
+            bilgiModalKapat();
+        }
+    });
+
+    levellerModalKapatBtn.addEventListener('click', levellerModalKapat);
+    levellerModal.addEventListener('click', (event) => {
+        if (event.target === levellerModal) {
+            levellerModalKapat();
+        }
+    });
+
+    ayarlarModalKapatBtn.addEventListener('click', ayarlarModalKapat);
+    ayarlarModal.addEventListener('click', (event) => {
+        if (event.target === ayarlarModal) {
+            ayarlarModalKapat();
+        }
+    });
+
+    magazaModalKapatBtn.addEventListener('click', magazaModalKapat);
+    magazaModal.addEventListener('click', (event) => {
+        if (event.target === magazaModal) {
+            magazaModalKapat();
+        }
+    });
+
+    reklamIptalBtn.addEventListener('click', reklamModalKapat);
+    reklamModal.addEventListener('click', (event) => {
+        if (event.target === reklamModal) {
+            reklamModalKapat();
+        }
+    });
+    reklamOnayBtn.addEventListener('click', () => {
+        if (typeof reklamOnayi === 'function') {
+            reklamOnayi();
+        }
+    });
+
+    temaSecenekleri.forEach((dugme) => {
+        dugme.addEventListener('click', () => {
+            if (!temaKullanilabilirMi(dugme.dataset.theme)) {
+                bilgiModalAc({
+                    etiket: 'Tema Paketi',
+                    baslik: 'Bu tema kilitli',
+                    mesaj: 'Bu temayi kullanmak icin once Magaza icinden Tema Paketi urununu etkinlestirmen gerekiyor.'
+                });
+                return;
+            }
+            temayiUygula(dugme.dataset.theme);
+        });
+    });
+
+    ilerlemeSifirlaBtn.addEventListener('click', () => {
+        const onay = window.confirm('Tum ilerleme sifirlansin mi? Bu islem geri alinamaz.');
+        if (!onay) return;
+
+        oyun.ilerlemeyiTemizle();
+        localStorage.removeItem(TAMAMLANAN_SEVIYELER_ANAHTARI);
+        oyunEkrani.classList.add('hidden');
+        oyunEkrani.classList.remove('flex');
+        girisEkrani.classList.remove('hidden');
+        ayarlarModalKapat();
+        magazaModalKapat();
+        devamEtDurumunuGuncelle();
+        levelleriCiz();
+    });
+
+    await mobileBridge.initialize();
+    await mobileBridge.restorePurchases();
+    temayiUygula(aktifTemayiGetir());
+    devamEtDurumunuGuncelle();
 });
